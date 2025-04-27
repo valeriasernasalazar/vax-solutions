@@ -17,7 +17,7 @@
   let scrollY = 0;
   let headerHeight = 0;
   let headerRef;
-  let mainRef; a
+  let mainRef;
   let isPageLoaded = false;
 
   // Detectar scroll para cambios de estilo en el header
@@ -63,26 +63,26 @@
   class:py-4={!isScrolled}
   class:py-2={isScrolled}
   class:bg-transparent={!isScrolled && isHomePage}
-  class:bg-white/90={isScrolled || !isHomePage}
+  class:{"bg-white/90"}={isScrolled || !isHomePage}
   class:backdrop-blur-lg={isScrolled || !isHomePage}
   class:shadow-lg={isScrolled || !isHomePage}
 >
   <div class="container mx-auto px-4">
     <div class="flex items-center justify-between">
-      <!-- Logo -->
+      <!-- Logo SVG -->
       <a href="/" class="z-10 relative">
         <div class="flex items-center">
-          <!-- Logo SVG -->
-          <div class="mr-3">
-            <svg width="40" height="40" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M95.4545 33.6312L74.1177 12.2834C68.1819 20.2047 56.3389 33.4436 44.4725 39.3816L65.8093 60.7294C77.6757 54.7914 89.5187 41.5525 95.4545 33.6312Z" fill={isScrolled || !isHomePage ? "#192550" : "#FFFFFF"}/>
-              <path d="M24.5455 86.3688L45.8823 107.717C51.8181 99.7952 63.6611 86.5564 75.5275 80.6184L54.1907 59.2706C42.3243 65.2086 30.4813 78.4475 24.5455 86.3688Z" fill={isScrolled || !isHomePage ? "#192550" : "#FFFFFF"}/>
-            </svg>
-          </div>
-          <span class="text-2xl font-bold transition-colors duration-300"
+          <!-- Solo el símbolo VA -->
+          <svg width="40" height="40" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M95.4545 33.6312L74.1177 12.2834C68.1819 20.2047 56.3389 33.4436 44.4725 39.3816L65.8093 60.7294C77.6757 54.7914 89.5187 41.5525 95.4545 33.6312Z" 
+                  fill={isScrolled || !isHomePage ? "#192550" : "#FFFFFF"}/>
+            <path d="M24.5455 86.3688L45.8823 107.717C51.8181 99.7952 63.6611 86.5564 75.5275 80.6184L54.1907 59.2706C42.3243 65.2086 30.4813 78.4475 24.5455 86.3688Z" 
+                  fill={isScrolled || !isHomePage ? "#192550" : "#FFFFFF"}/>
+          </svg>
+          <!-- Texto separado como HTML -->
+          <span class="text-2xl font-bold ml-2 transition-colors duration-300"
             class:text-white={!isScrolled && isHomePage}
-            class:text-primary-700={isScrolled || !isHomePage}
-          >
+            class:text-primary-700={isScrolled || !isHomePage}>
             VAX<span class="text-secondary">Solutions</span>
           </span>
         </div>
@@ -132,7 +132,7 @@
         class="lg:hidden relative z-10 p-2 rounded-lg transition-colors duration-300" 
         class:text-white={!isScrolled && isHomePage && !isMenuOpen}
         class:text-primary-700={isScrolled || !isHomePage || isMenuOpen}
-        class:hover:bg-white/10={!isScrolled && isHomePage && !isMenuOpen}
+        class:{"hover:bg-white/10"}={!isScrolled && isHomePage && !isMenuOpen}
         class:hover:bg-primary-50={isScrolled || !isHomePage || isMenuOpen}
         aria-label="Alternar menú móvil"
         on:click={toggleMenu}
@@ -151,13 +151,15 @@
   <!-- Menú móvil con efecto glassmorphism -->
   {#if isMenuOpen}
     <div 
-      class="lg:hidden fixed inset-0 z-0 bg-gray-900/50 backdrop-blur-sm transition-opacity duration-300"
+      class="lg:hidden fixed inset-0 z-0 backdrop-blur-sm transition-opacity duration-300"
+      class:{"bg-gray-900/50"}={true}
       class:opacity-100={isMenuOpen}
       class:opacity-0={!isMenuOpen}
       on:click={toggleMenu}
     ></div>
     <div 
-      class="lg:hidden fixed top-0 right-0 bottom-0 z-0 w-4/5 max-w-sm bg-white/95 backdrop-blur-lg shadow-2xl transform transition-transform duration-300 ease-in-out"
+      class="lg:hidden fixed top-0 right-0 bottom-0 z-0 w-4/5 max-w-sm backdrop-blur-lg shadow-2xl transform transition-transform duration-300 ease-in-out"
+      class:{"bg-white/95"}={true}
       class:translate-x-0={isMenuOpen}
       class:translate-x-full={!isMenuOpen}
       style="margin-top: {headerHeight}px;"
@@ -237,7 +239,8 @@
       <!-- Columna 1: Información de la empresa -->
       <div>
         <div class="flex items-center mb-6">
-          <svg width="40" height="40" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
+          <!-- Logo simplificado para el footer -->
+          <svg width="40" height="40" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-2">
             <path d="M95.4545 33.6312L74.1177 12.2834C68.1819 20.2047 56.3389 33.4436 44.4725 39.3816L65.8093 60.7294C77.6757 54.7914 89.5187 41.5525 95.4545 33.6312Z" fill="white"/>
             <path d="M24.5455 86.3688L45.8823 107.717C51.8181 99.7952 63.6611 86.5564 75.5275 80.6184L54.1907 59.2706C42.3243 65.2086 30.4813 78.4475 24.5455 86.3688Z" fill="white"/>
           </svg>
@@ -376,9 +379,11 @@
             <input 
               type="email" 
               placeholder="Tu correo electrónico" 
-              class="px-4 py-2 rounded-lg bg-primary-800 border border-primary-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-secondary"
+              class="px-4 py-2 rounded-lg border text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-secondary"
+              class:{"bg-primary-800"}={true}
+              class:{"border-primary-700"}={true}
             />
-            <button class="btn bg-secondary text-white hover:bg-secondary-400 px-4 py-2">
+            <button class="btn px-4 py-2 text-white hover:bg-secondary-400" class:{"bg-secondary"}={true}>
               Suscribirse
             </button>
           </div>

@@ -11,19 +11,19 @@ export default {
           300: '#93a9d4',
           400: '#6a82bd',
           500: '#4c62a7',
-          600: '#3c4e89', // Azul marino similar al logo
+          600: '#3c4e89',
           700: '#192550', // Color principal del logo
           800: '#10193a',
           900: '#0a1029',
           950: '#050816',
-          DEFAULT: '#192550',
+          DEFAULT: '#192550', // Azul marino igual al logo
         },
         secondary: {
           50: '#eefafd',
           100: '#d4f2fa',
           200: '#afe6f5',
           300: '#7bd4ee',
-          400: '#3dbae0',
+          400: '#3dbae0', // Celeste/turquesa para contraste
           500: '#1ca0ca',
           600: '#167fa2',
           700: '#186684',
@@ -38,7 +38,7 @@ export default {
           200: '#c6dded',
           300: '#a0c5de',
           400: '#72a5cc',
-          500: '#4f86ba',
+          500: '#4f86ba', // Color acento complementario
           600: '#3f6c9d',
           700: '#365781',
           800: '#2f4a69',
@@ -60,7 +60,9 @@ export default {
       animation: {
         'float': 'float 6s ease-in-out infinite',
         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'shimmer': 'shimmer 2s linear infinite'
+        'shimmer': 'shimmer 2s linear infinite',
+        'spin-slow': 'spin 4s linear infinite',
+        'draw': 'draw 3s forwards ease-in-out',
       },
       keyframes: {
         float: {
@@ -70,6 +72,9 @@ export default {
         shimmer: {
           '0%': { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' }
+        },
+        draw: {
+          'to': { strokeDashoffset: '0' }
         }
       },
       backgroundImage: {

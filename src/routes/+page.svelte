@@ -141,10 +141,15 @@
 
 <svelte:head>
   <title>VAX Solutions - Transformando Datos en Valor</title>
-  <meta name="description" content="Soluciones avanzadas de Data Science e Inteligencia Artificial diseñadas para impulsar la innovación y el crecimiento de tu empresa." />
+  <meta name="description" content="VAX Solutions: consultoría especializada en Data Science e IA. Transformamos tus datos en acciones concretas para impulsar la innovación y el crecimiento de tu negocio." />
+  
+  <!-- Añadir precarga para las fuentes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </svelte:head>
 
-<!-- Hero Section with Glassmorphism -->
+<!-- Hero Section con Glassmorphism -->
 <section class="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700">
   <!-- Partículas animadas de fondo -->
   <div class="absolute inset-0 overflow-hidden">
@@ -192,7 +197,7 @@
         </div>
       </div>
       
-      <!-- Elemento visual animado -->
+      <!-- Elemento visual animado con glassmorphism -->
       <div class="lg:w-1/2 relative">
         <div class="relative h-64 sm:h-96 lg:h-auto">
           <!-- Efectos de glassmorphism con datos animados -->
@@ -428,7 +433,7 @@
     </div>
     
     <div class="max-w-4xl mx-auto">
-      <div class="relative h-auto">
+      <div class="relative h-auto min-h-[300px]">
         {#each testimonials as testimonial, i}
           <div 
             class="absolute inset-0 transition-opacity duration-1000 ease-in-out glass-card backdrop-blur-lg p-8 md:p-10 {currentTestimonial === i ? 'opacity-100 z-10' : 'opacity-0 z-0'}"
@@ -563,5 +568,97 @@
   /* Transiciones para animaciones de scroll */
   .animate-on-scroll {
     transition: transform 0.8s ease-out, opacity 0.8s ease-out;
+  }
+  
+  /* Glassmorphism */
+  .glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(25, 37, 80, 0.15);
+  }
+  
+  .glass-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 1rem;
+    box-shadow: 0 8px 32px 0 rgba(25, 37, 80, 0.15);
+    transition: all 0.3s ease;
+  }
+  
+  .glass-card:hover {
+    box-shadow: 0 8px 32px 0 rgba(25, 37, 80, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+  
+  .glass-button {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+  
+  .glass-button:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+  }
+  
+  /* Patrones de fondo */
+  .bg-mesh {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  
+  /* Utilidades para animaciones */
+  .animate-pulse-slow {
+    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  .delay-100 {
+    animation-delay: 0.1s;
+  }
+  
+  .delay-200 {
+    animation-delay: 0.2s;
+  }
+  
+  .delay-300 {
+    animation-delay: 0.3s;
+  }
+  
+  .delay-400 {
+    animation-delay: 0.4s;
+  }
+  
+  .delay-500 {
+    animation-delay: 0.5s;
+  }
+  
+  /* Altura porcentual para gráficos */
+  .h-40\% {
+    height: 40%;
+  }
+  
+  .h-50\% {
+    height: 50%;
+  }
+  
+  .h-60\% {
+    height: 60%;
+  }
+  
+  .h-70\% {
+    height: 70%;
+  }
+  
+  .h-90\% {
+    height: 90%;
   }
 </style>

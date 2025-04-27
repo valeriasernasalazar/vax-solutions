@@ -84,15 +84,6 @@
   .gradient-text-blue {
     @apply bg-gradient-to-r from-primary-700 to-secondary bg-clip-text text-transparent;
   }
-
-  /* Navegación */
-  .nav-link {
-    @apply relative text-gray-600 hover:text-primary transition-colors duration-300 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all after:duration-300 hover:after:w-full;
-  }
-
-  .nav-link.active {
-    @apply text-primary after:w-full;
-  }
 }
 
 /* Glassmorphism & Efectos Modernos */
@@ -138,6 +129,12 @@
   100% { background-position: 200% 0; }
 }
 
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }
@@ -150,6 +147,36 @@
   background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%);
   background-size: 200% 100%;
   animation: shimmer 2s linear infinite;
+}
+
+.animate-draw {
+  animation: draw 3s forwards ease-in-out;
+}
+
+/* Transiciones para animaciones de scroll */
+.animate-on-scroll {
+  transition: transform 0.8s ease-out, opacity 0.8s ease-out;
+}
+
+/* Altura porcentual para gráficos */
+.h-40\% {
+  height: 40%;
+}
+
+.h-50\% {
+  height: 50%;
+}
+
+.h-60\% {
+  height: 60%;
+}
+
+.h-70\% {
+  height: 70%;
+}
+
+.h-90\% {
+  height: 90%;
 }
 
 /* Diseño Responsivo */
