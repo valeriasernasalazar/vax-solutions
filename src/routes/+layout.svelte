@@ -48,6 +48,15 @@
   
   function toggleMenu() {
     isMenuOpen = !isMenuOpen;
+    // Add ARIA announcement for screen readers
+    const menuAnnouncement = isMenuOpen ? 'Menú abierto' : 'Menú cerrado';
+    const announcement = document.createElement('div');
+    announcement.setAttribute('role', 'status');
+    announcement.setAttribute('aria-live', 'polite');
+    announcement.classList.add('sr-only');
+    announcement.textContent = menuAnnouncement;
+    document.body.appendChild(announcement);
+    setTimeout(() => announcement.remove(), 1000);
   }
   
   // Estado para animación del header
@@ -55,7 +64,24 @@
   
   // Determinar si estamos en la página de inicio
   $: isHomePage = $page.url.pathname === '/';
+
+  // Handle keyboard navigation for menu
+  function handleKeyDown(event) {
+    if (event.key === 'Escape' && isMenuOpen) {
+      toggleMenu();
+    }
+  }
 </script>
+
+<svelte:window on:keydown={handleKeyDown} />
+
+<svelte:head>
+  <html lang="es" />
+</svelte:head>
+
+<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-white focus:text-primary-900 focus:outline-2 focus:outline-offset-2 focus:outline-primary-600">
+  Saltar al contenido principal
+</a>
 
 <header 
   bind:this={headerRef}
@@ -63,17 +89,23 @@
   class:py-4={!isScrolled}
   class:py-2={isScrolled}
   class:bg-transparent={!isScrolled && isHomePage}
-  class:{"bg-white/90"}={isScrolled || !isHomePage}
+  class:bg-white={isScrolled || !isHomePage}
+  class:opacity-90={isScrolled || !isHomePage}
   class:backdrop-blur-lg={isScrolled || !isHomePage}
   class:shadow-lg={isScrolled || !isHomePage}
+  role="banner"
 >
   <div class="container mx-auto px-4">
     <div class="flex items-center justify-between">
       <!-- Logo SVG -->
-      <a href="/" class="z-10 relative">
+      <a 
+        href="/" 
+        class="z-10 relative focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2 rounded-lg" 
+        aria-label="VAX Solutions - Ir a inicio"
+      >
         <div class="flex items-center">
           <!-- Solo el símbolo VA -->
-          <svg width="40" height="40" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg width="40" height="40" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <path d="M95.4545 33.6312L74.1177 12.2834C68.1819 20.2047 56.3389 33.4436 44.4725 39.3816L65.8093 60.7294C77.6757 54.7914 89.5187 41.5525 95.4545 33.6312Z" 
                   fill={isScrolled || !isHomePage ? "#192550" : "#FFFFFF"}/>
             <path d="M24.5455 86.3688L45.8823 107.717C51.8181 99.7952 63.6611 86.5564 75.5275 80.6184L54.1907 59.2706C42.3243 65.2086 30.4813 78.4475 24.5455 86.3688Z" 
@@ -89,13 +121,14 @@
       </a>
       
       <!-- Navegación de escritorio -->
-      <div class="hidden lg:flex items-center space-x-8">
-        {#each navItems as item}
+      <nav class="hidden lg:flex items-center space-x-8" aria-label="Navegación principal">
+        {#each navItems as item, index}
           <a
             href={item.href}
             class="relative py-2 text-lg font-medium transition-colors duration-300
               after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-0 
-              after:transition-all after:duration-300 hover:after:w-full"
+              after:transition-all after:duration-300 hover:after:w-full
+              focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2 rounded-lg"
             class:text-white={!isScrolled && isHomePage}
             class:text-gray-700={isScrolled || !isHomePage}
             class:hover:text-white={!isScrolled && isHomePage}
@@ -104,24 +137,24 @@
             class:after:bg-primary-600={isScrolled || !isHomePage}
             class:text-secondary={$page.url.pathname === item.href}
             class:after:w-full={$page.url.pathname === item.href}
+            aria-current={$page.url.pathname === item.href ? 'page' : undefined}
+            tabindex="0"
           >
             {item.label}
           </a>
         {/each}
-      </div>
+      </nav>
 
       <!-- Botón de contacto -->
       <div class="hidden lg:block">
         <a 
           href="/contacto" 
-          class="btn transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+          class="btn transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 hover:bg-secondary hover:text-white
+                focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2"
           class:bg-white={!isScrolled && isHomePage}
           class:text-primary-700={!isScrolled && isHomePage}
-          class:hover:bg-secondary={!isScrolled && isHomePage}
-          class:hover:text-white={!isScrolled && isHomePage}
           class:bg-primary-700={isScrolled || !isHomePage}
           class:text-white={isScrolled || !isHomePage}
-          class:hover:bg-secondary={isScrolled || !isHomePage}
         >
           Contáctanos
         </a>
@@ -129,15 +162,17 @@
 
       <!-- Botón de menú móvil -->
       <button 
-        class="lg:hidden relative z-10 p-2 rounded-lg transition-colors duration-300" 
+        class="lg:hidden relative z-10 p-2 rounded-lg transition-colors duration-300 hover:bg-white/10
+               focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2" 
         class:text-white={!isScrolled && isHomePage && !isMenuOpen}
         class:text-primary-700={isScrolled || !isHomePage || isMenuOpen}
-        class:{"hover:bg-white/10"}={!isScrolled && isHomePage && !isMenuOpen}
         class:hover:bg-primary-50={isScrolled || !isHomePage || isMenuOpen}
-        aria-label="Alternar menú móvil"
+        aria-label={isMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
+        aria-expanded={isMenuOpen}
+        aria-controls="mobile-menu"
         on:click={toggleMenu}
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
           {#if isMenuOpen}
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           {:else}
@@ -151,37 +186,43 @@
   <!-- Menú móvil con efecto glassmorphism -->
   {#if isMenuOpen}
     <div 
-      class="lg:hidden fixed inset-0 z-0 backdrop-blur-sm transition-opacity duration-300"
-      class:{"bg-gray-900/50"}={true}
+      class="lg:hidden fixed inset-0 z-0 backdrop-blur-sm transition-opacity duration-300 bg-gray-900/50"
       class:opacity-100={isMenuOpen}
       class:opacity-0={!isMenuOpen}
       on:click={toggleMenu}
+      aria-hidden="true"
     ></div>
     <div 
-      class="lg:hidden fixed top-0 right-0 bottom-0 z-0 w-4/5 max-w-sm backdrop-blur-lg shadow-2xl transform transition-transform duration-300 ease-in-out"
-      class:{"bg-white/95"}={true}
+      id="mobile-menu"
+      class="lg:hidden fixed top-0 right-0 bottom-0 z-0 w-4/5 max-w-sm backdrop-blur-lg shadow-2xl transform transition-transform duration-300 ease-in-out bg-white/95"
       class:translate-x-0={isMenuOpen}
       class:translate-x-full={!isMenuOpen}
       style="margin-top: {headerHeight}px;"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Menú de navegación móvil"
     >
       <div class="py-6 px-6 overflow-y-auto h-full flex flex-col">
-        <nav class="space-y-1 mb-8">
+        <nav class="space-y-1 mb-8" aria-label="Menú móvil">
           {#each navItems as item}
             <a
               href={item.href}
-              class="block py-3 px-4 text-lg font-medium rounded-lg transition-colors duration-200"
+              class="block py-3 px-4 text-lg font-medium rounded-lg transition-colors duration-200
+                     focus:outline-none focus:ring-2 focus:ring-primary-600"
               class:text-gray-700={$page.url.pathname !== item.href}
               class:text-primary-700={$page.url.pathname === item.href}
               class:bg-primary-50={$page.url.pathname === item.href}
               class:hover:text-primary-600={$page.url.pathname !== item.href}
               class:hover:bg-gray-50={$page.url.pathname !== item.href}
+              aria-current={$page.url.pathname === item.href ? 'page' : undefined}
             >
               {item.label}
             </a>
           {/each}
           <a
             href="/contacto"
-            class="block py-3 px-4 text-lg font-medium rounded-lg transition-colors duration-200"
+            class="block py-3 px-4 text-lg font-medium rounded-lg transition-colors duration-200
+                   focus:outline-none focus:ring-2 focus:ring-primary-600"
             class:text-gray-700={$page.url.pathname !== '/contacto'}
             class:text-primary-700={$page.url.pathname === '/contacto'}
             class:bg-primary-50={$page.url.pathname === '/contacto'}
@@ -195,21 +236,33 @@
         <div class="mt-auto pt-6 border-t border-gray-100">
           <!-- Social media links -->
           <div class="flex justify-center space-x-5">
-            <a href="#" class="text-gray-400 hover:text-primary-600 transition-colors">
-              <span class="sr-only">LinkedIn</span>
-              <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+            <a 
+              href="#" 
+              class="text-gray-400 hover:text-primary-600 transition-colors p-2 rounded-full
+                     focus:outline-none focus:ring-2 focus:ring-primary-600" 
+              aria-label="Visitar LinkedIn"
+            >
+              <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
               </svg>
             </a>
-            <a href="#" class="text-gray-400 hover:text-primary-600 transition-colors">
-              <span class="sr-only">Twitter</span>
-              <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+            <a 
+              href="#" 
+              class="text-gray-400 hover:text-primary-600 transition-colors p-2 rounded-full
+                     focus:outline-none focus:ring-2 focus:ring-primary-600" 
+              aria-label="Visitar Twitter"
+            >
+              <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723 10.1 10.1 0 01-3.127 1.184 4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.937 4.937 0 004.604 3.417 9.868 9.868 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.054 0 13.999-7.496 13.999-13.986 0-.209 0-.42-.015-.63a9.936 9.936 0 002.46-2.548l-.047-.02z"/>
               </svg>
             </a>
-            <a href="#" class="text-gray-400 hover:text-primary-600 transition-colors">
-              <span class="sr-only">Instagram</span>
-              <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+            <a 
+              href="#" 
+              class="text-gray-400 hover:text-primary-600 transition-colors p-2 rounded-full
+                     focus:outline-none focus:ring-2 focus:ring-primary-600" 
+              aria-label="Visitar Instagram"
+            >
+              <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
               </svg>
             </a>
@@ -224,15 +277,15 @@
   {/if}
 </header>
 
-<main bind:this={mainRef} class="min-h-screen">
+<main id="main-content" bind:this={mainRef} class="min-h-screen" role="main" tabindex="-1">
   {#if isPageLoaded}
     <slot />
   {/if}
 </main>
 
-<footer class="bg-primary-900 text-white relative overflow-hidden">
+<footer class="bg-primary-900 text-white relative overflow-hidden" role="contentinfo">
   <!-- Patrones de fondo -->
-  <div class="absolute inset-0 bg-mesh opacity-10"></div>
+  <div class="absolute inset-0 bg-mesh opacity-10" aria-hidden="true"></div>
   
   <div class="container mx-auto px-4 py-16">
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
@@ -240,7 +293,7 @@
       <div>
         <div class="flex items-center mb-6">
           <!-- Logo simplificado para el footer -->
-          <svg width="40" height="40" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-2">
+          <svg width="40" height="40" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-2" aria-hidden="true">
             <path d="M95.4545 33.6312L74.1177 12.2834C68.1819 20.2047 56.3389 33.4436 44.4725 39.3816L65.8093 60.7294C77.6757 54.7914 89.5187 41.5525 95.4545 33.6312Z" fill="white"/>
             <path d="M24.5455 86.3688L45.8823 107.717C51.8181 99.7952 63.6611 86.5564 75.5275 80.6184L54.1907 59.2706C42.3243 65.2086 30.4813 78.4475 24.5455 86.3688Z" fill="white"/>
           </svg>
@@ -254,22 +307,22 @@
           de tu empresa mediante soluciones avanzadas de Data Science e IA.
         </p>
         
-        <div class="flex space-x-4">
-          <a href="#" class="text-gray-400 hover:text-white transition-colors">
+        <div class="flex space-x-4" role="list" aria-label="Redes sociales">
+          <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="Visitar LinkedIn">
             <span class="sr-only">LinkedIn</span>
-            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
             </svg>
           </a>
-          <a href="#" class="text-gray-400 hover:text-white transition-colors">
+          <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="Visitar Twitter">
             <span class="sr-only">Twitter</span>
-            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723 10.1 10.1 0 01-3.127 1.184 4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.937 4.937 0 004.604 3.417 9.868 9.868 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.054 0 13.999-7.496 13.999-13.986 0-.209 0-.42-.015-.63a9.936 9.936 0 002.46-2.548l-.047-.02z"/>
             </svg>
           </a>
-          <a href="#" class="text-gray-400 hover:text-white transition-colors">
+          <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="Visitar Instagram">
             <span class="sr-only">Instagram</span>
-            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
             </svg>
           </a>
@@ -277,9 +330,9 @@
       </div>
       
       <!-- Columna 2: Enlaces útiles -->
-      <div>
-        <h3 class="text-lg font-bold mb-6 text-white">Enlaces rápidos</h3>
-        <ul class="space-y-3">
+      <nav aria-label="Enlaces rápidos">
+        <h2 class="text-lg font-bold mb-6 text-white">Enlaces rápidos</h2>
+        <ul class="space-y-3" role="list">
           {#each navItems as item}
             <li>
               <a
@@ -305,12 +358,12 @@
             </a>
           </li>
         </ul>
-      </div>
+      </nav>
       
       <!-- Columna 3: Servicios -->
-      <div>
-        <h3 class="text-lg font-bold mb-6 text-white">Nuestros servicios</h3>
-        <ul class="space-y-3">
+      <nav aria-label="Nuestros servicios">
+        <h2 class="text-lg font-bold mb-6 text-white">Nuestros servicios</h2>
+        <ul class="space-y-3" role="list">
           <li>
             <a href="/servicios" class="text-gray-300 hover:text-secondary transition-colors">
               Estrategia de Datos
@@ -337,12 +390,12 @@
             </a>
           </li>
         </ul>
-      </div>
+      </nav>
       
       <!-- Columna 4: Contacto -->
       <div>
-        <h3 class="text-lg font-bold mb-6 text-white">Contacto</h3>
-        <ul class="space-y-4">
+        <h2 class="text-lg font-bold mb-6 text-white">Contacto</h2>
+        <ul class="space-y-4" role="list" aria-label="Información de contacto">
           <li class="flex items-start">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-secondary mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -366,28 +419,35 @@
       </div>
     </div>
     
-    <!-- Separador -->
+    <!-- Newsletter subscription -->
     <div class="border-t border-gray-800 mt-12 pt-8">
       <div class="flex flex-col md:flex-row md:justify-between items-center">
         <p class="text-gray-400 text-sm order-2 md:order-1 mt-4 md:mt-0">
           &copy; {new Date().getFullYear()} VAX Solutions. Todos los derechos reservados.
         </p>
         
-        <!-- Newsletter suscription -->
-        <div class="order-1 md:order-2 w-full md:w-auto">
+        <form class="order-1 md:order-2 w-full md:w-auto" aria-label="Formulario de suscripción al boletín">
           <div class="flex flex-col sm:flex-row gap-3">
-            <input 
-              type="email" 
-              placeholder="Tu correo electrónico" 
-              class="px-4 py-2 rounded-lg border text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-secondary"
-              class:{"bg-primary-800"}={true}
-              class:{"border-primary-700"}={true}
-            />
-            <button class="btn px-4 py-2 text-white hover:bg-secondary-400" class:{"bg-secondary"}={true}>
+            <div class="flex-1">
+              <label for="newsletter-email" class="sr-only">Correo electrónico</label>
+              <input 
+                type="email" 
+                id="newsletter-email"
+                name="email"
+                placeholder="Tu correo electrónico" 
+                class="w-full px-4 py-2 rounded-lg border text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-secondary bg-primary-800 border-primary-700"
+                aria-label="Ingresa tu correo electrónico para suscribirte"
+              />
+            </div>
+            <button 
+              type="submit"
+              class="btn px-4 py-2 text-white hover:bg-secondary-400 bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary"
+              aria-label="Suscribirse al boletín"
+            >
               Suscribirse
             </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   </div>
@@ -398,5 +458,30 @@
   .bg-mesh {
     background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
     background-size: 20px 20px;
+  }
+
+  /* Estilos de accesibilidad */
+  .sr-only:not(:focus):not(:active) {
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+  }
+
+  :focus {
+    outline: 2px solid var(--color-secondary);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 </style>

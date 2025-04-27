@@ -326,7 +326,9 @@
           class:opacity-0={!isIntersecting[`service-card-${i}`]}
           style="transition-delay: {i * 100}ms"
         >
-          <div class="text-primary group-hover:text-secondary transition-colors mb-6" {@html service.icon}</div>
+          <div class="text-primary group-hover:text-secondary transition-colors mb-6">
+            {@html service.icon}
+          </div>
           <h3 class="text-2xl font-bold mb-3 group-hover:text-secondary transition-colors">{service.title}</h3>
           <p class="text-gray-600 mb-6">{service.description}</p>
           <a href="/servicios" class="inline-flex items-center text-primary font-medium group-hover:text-secondary transition-colors">

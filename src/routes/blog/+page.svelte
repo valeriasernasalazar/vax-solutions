@@ -55,8 +55,17 @@
     : posts.filter(post => post.category === selectedCategory);
 
   function formatDate(dateString) {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString('es-ES', options);
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        return 'Fecha no válida';
+      }
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      return date.toLocaleDateString('es-ES', options);
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'Fecha no válida';
+    }
   }
 </script>
 
