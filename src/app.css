@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --secondary: #0ea5e9;
+    --accent: #8b5cf6;
+    --background: #f8fafc;
+    --foreground: #0f172a;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  h1 {
+    @apply text-5xl font-bold text-foreground mb-6 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent;
+  }
+
+  h2 {
+    @apply text-4xl font-bold text-foreground mb-4;
+  }
+
+  h3 {
+    @apply text-2xl font-semibold text-foreground mb-3;
+  }
+
+  p {
+    @apply text-gray-600 leading-relaxed mb-4;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply px-6 py-3 rounded-lg font-medium transition-all duration-300 transform hover:scale-105;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary text-white hover:bg-primary-dark shadow-lg hover:shadow-xl;
+  }
+
+  .btn-secondary {
+    @apply btn bg-secondary text-white hover:bg-secondary/90;
+  }
+
+  .container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .card {
+    @apply bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6;
+  }
+
+  .tech-badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent;
+  }
+
+  .nav-link {
+    @apply relative text-gray-600 hover:text-primary transition-colors duration-300;
+  }
+
+  .nav-link::after {
+    @apply content-[''] absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300;
+  }
+
+  .nav-link:hover::after {
+    @apply w-full;
+  }
+}
+
+/* Animations */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Glass effect */
+.glass {
+  @apply bg-white/10 backdrop-blur-lg border border-white/20;
+} 
